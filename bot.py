@@ -15,7 +15,7 @@ class customHelp(commands.HelpCommand):
     async def send_command_help(self, command):
         await self.get_destination().send(command.description)
 
-client = commands.Bot(command_prefix = ('skribbl ', 'ß'), help_command=customHelp())
+client = commands.Bot(command_prefix = ('skribbl ', 'ß', 'skribble '), help_command=customHelp())
 
 async def getData(name):
     try:
