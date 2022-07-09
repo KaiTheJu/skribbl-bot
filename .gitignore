@@ -4,3 +4,4 @@
 **/*.json
 **/.token
 **/test.py
+**/message.txt
