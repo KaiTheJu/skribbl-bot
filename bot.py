@@ -1,3 +1,4 @@
+import os
 import discord
 import asyncio
 from discord.ext import commands
@@ -80,7 +81,10 @@ async def words(ctx):
         try:
             await ctx.send(message)
         except discord.errors.HTTPException:
-            await client.send_file(ctx.channel, 'list.txt', cotent=message)
+            with open('message.txt', 'w') as f:
+                f.write(message)
+            await ctx.send(file=discord.File('message.txt'))
+            os.remove('message.txt')
     else:
         await ctx.send('Keine Einträge vorhanden')
 
