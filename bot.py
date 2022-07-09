@@ -1,4 +1,5 @@
 import discord
+import asyncio
 from discord.ext import commands
 import json
 
@@ -25,10 +26,26 @@ async def getData(name):
         with open(name + '.json', 'w') as f:
             json.dump([], f)
         return []
+    except json.decoder.JSONDecodeError:
+        with open(name + '.json', 'w') as f:
+            json.dump([], f)
+        return []
 
 async def saveData(name, data):
     with open(name + '.json', 'w') as f:
         json.dump(data, f)
+
+async def snorm(string):
+    return str(string).lower().strip()
+
+async def norm(x):
+    for index, i in enumerate(x):
+        x[index] = await snorm(i)
+        if len(i) > 30 or not i:
+            x.remove(i)
+    x = list(set(x))
+    x.sort()
+    return x
 
 @client.event
 async def on_ready():
@@ -46,18 +63,18 @@ async def status(ctx):
 async def add(ctx, *, message):
     data = await getData(ctx.guild.name)
     for i in message.split(','):
-        if i.strip() and len(i.strip()) <= 30 and i.strip() not in data: 
-            data.append(i.strip())
-        elif len(i.strip()) > 30:
-            await ctx.send(i.strip() + ' ist zu lang')
-    data = await saveData(ctx.guild.name, data)
+        data.append(i)
+    data = await norm(data)
+    await saveData(ctx.guild.name, data)
     await ctx.send('gespeichert')
 
-@client.command(description = 'Listet alle Wörter auf')
-async def list(ctx):
+@client.command(description = 'Listet alle Wörter auf', aliases = ['list', 'ls'])
+async def words(ctx):
     data = await getData(ctx.guild.name)
+    if not data:
+        print('Keine Einträge vorhanden.')
     message = ''
-    for i in data:
+    for i in await norm(data):
         message += i + ', '
     if message:
         await ctx.send(message)
@@ -68,7 +85,7 @@ async def list(ctx):
 async def remove(ctx, *, message):
     data = await getData(ctx.guild.name)
     data.remove(message)
-    data = await saveData(ctx.guild.name, data)
+    await saveData(ctx.guild.name, await norm(data))
     await ctx.send('Wort entfernt')
 
 token = ''
