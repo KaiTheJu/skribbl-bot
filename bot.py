@@ -77,7 +77,10 @@ async def words(ctx):
     for i in await norm(data):
         message += i + ', '
     if message:
-        await ctx.send(message)
+        try:
+            await ctx.send(message)
+        except discord.errors.HTTPException:
+            await client.send_file(ctx.channel, 'list.txt', cotent=message)
     else:
         await ctx.send('Keine Einträge vorhanden')
 
