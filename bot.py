@@ -85,6 +85,7 @@ async def words(ctx):
                 f.write(message)
             await ctx.send(file=discord.File('message.txt'))
             os.remove('message.txt')
+        await ctx.send(f'Das sind {len(norm(data))} Einträge.')
     else:
         await ctx.send('Keine Einträge vorhanden')
 
