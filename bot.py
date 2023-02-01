@@ -75,7 +75,7 @@ async def words(ctx):
     if not data:
         print('Keine Einträge vorhanden.')
     message = ''
-    for i in await norm(data):
+    for i in await norm(data).copy().shuffle():
         message += i + ', '
     if message:
         try:
